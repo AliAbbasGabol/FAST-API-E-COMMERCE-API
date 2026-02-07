@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Query, HTTPException, status
+from fastapi import FastAPI, Query, HTTPException, status, Path
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Annotated
 app = FastAPI()
 
@@ -8,7 +8,7 @@ app = FastAPI()
 
 class product(BaseModel):
     name: str
-    price: int
+    price: int = Field(ge=1, le=999999)
     category: str
     creator: str | None = None
 
@@ -45,6 +45,6 @@ def add_product(item: product):
     return items
 
 @app.put("/producs/{id}" )
-def update_product(id: int, price: Annotated[int, Query(ge=1, le=999999)], phone: Annotated[int, Query(ge=100000000000, le=9999999999999)], email: Annotated[str, Query(pattern= "^[a-zA-z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")]):
-    return price
+def update_product(id: Annotated[int, Path(title="The ID of the item to get")], price: Annotated[int, Query(ge=1, le=999999)], phone: Annotated[int, Query(ge=100000000000, le=9999999999999)], email: Annotated[str, Query(pattern= "^[a-zA-z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")]):
+    return price, id
      
